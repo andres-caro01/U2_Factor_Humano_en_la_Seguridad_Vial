@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glosario de Infraestructura y Factores Humanos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- VARIABLES DE COLOR --- */
+        :root {
+            --primary-brand: #27728F;
+            --bg-light: #ececec;
+            --text-dark: #333333;
+            --white: #ffffff;
+            --disabled-gray: #a0a0a0;
+            --disabled-bg: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: radial-gradient(#d0d0d0 1px, transparent 1px);
+            background-size: 10px 10px;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .glossary-widget {
+            width: 100%;
+            max-width: 900px;
+            background: transparent;
+            position: relative; 
+        }
+
+        .instruction-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .instruction-badge {
+            background-color: var(--primary-brand);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse-attention 2s infinite;
+        }
+
+        @keyframes pulse-attention {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(39, 114, 143, 0.4); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(39, 114, 143, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(39, 114, 143, 0); }
+        }
+
+        .glossary-header {
+            background-color: var(--primary-brand);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .glossary-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .glossary-body {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start; 
+        }
+
+        .tabs-container {
+            display: flex;
+            flex-direction: column;
+            width: 140px;
+            flex-shrink: 0;
+            background-color: var(--primary-brand);
+            border-radius: 15px;
+            padding: 10px 0;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px; 
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: var(--white);
+            border: none;
+            padding: 15px 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            outline: none;
+            position: relative;
+        }
+
+        .tab-btn:hover:not(.disabled) {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .tab-btn.active {
+            background-color: var(--bg-light);
+            color: var(--primary-brand);
+            border-radius: 5px 0 0 5px;
+        }
+
+        /* --- ESTILOS BOTÓN BLOQUEADO --- */
+        .tab-btn.disabled {
+            color: var(--disabled-gray);
+            background-color: rgba(0, 0, 0, 0.15);
+            cursor: not-allowed;
+        }
+
+        /* --- MENSAJE FLOTANTE (TOOLTIP) --- */
+        .tab-btn.disabled::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 105%;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #333333;
+            color: var(--white);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .tab-btn.disabled::before {
+            content: '';
+            position: absolute;
+            left: 101%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent #333333 transparent transparent;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            z-index: 10;
+        }
+
+        .tab-btn.disabled:hover::after,
+        .tab-btn.disabled:hover::before {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            background-color: var(--bg-light);
+            border-radius: 15px;
+            padding: 40px;
+            min-height: 450px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .definition-item {
+            margin-bottom: 30px;
+            padding-left: 20px;
+            border-left: 5px solid var(--primary-brand);
+        }
+
+        .definition-item h3 {
+            color: var(--primary-brand);
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .definition-item p {
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin: 0;
+            text-align: left;
+        }
+
+        .hidden { display: none; }
+
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in .definition-item {
+            animation: slideUpFade 0.5s ease-out forwards;
+            opacity: 0; 
+        }
+
+        .animate-in .definition-item:nth-child(n) { animation-delay: 0.1s; }
+
+        @media (max-width: 768px) {
+            .glossary-body { flex-direction: column; }
+            .tabs-container { width: 100%; flex-direction: row; position: static; }
+            .tab-btn { flex: 1; border-bottom: none; border-right: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; }
+            .tab-btn.active { border-radius: 10px 10px 0 0; }
+            .tab-btn.disabled::after { left: 50%; top: auto; bottom: 115%; transform: translateX(-50%); }
+            .tab-btn.disabled::before { left: 50%; top: auto; bottom: 105%; transform: translateX(-50%); border-color: #333333 transparent transparent transparent; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="glossary-widget">
+    <div class="instruction-wrapper">
+        <div class="instruction-badge">
+            <span>👆</span> Haga Clic para ampliar la información
+        </div>
+    </div>
+
+    <div class="glossary-header">
+        <h1>Glosario de la unidad</h1>
+    </div>
+
+    <div class="glossary-body">
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="filterContent('A-I', this)">A – I</button>
+            <button class="tab-btn disabled" data-tooltip="No hay términos disponibles en esta sección">J – Q</button>
+            <button class="tab-btn" onclick="filterContent('R-Z', this)">R – Z</button>
+        </div>
+
+        <div class="content-area">
+            <!-- GRUPO A - I -->
+            <div class="content-group animate-in" id="group-A-I">
+                <div class="definition-item">
+                    <h3>Adaptación sensorial</h3>
+                    <p>Reducción en la respuesta de los usuarios a estímulos constantes o repetitivos en el entorno vial.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Atención selectiva</h3>
+                    <p>Fenómeno por el cual los usuarios se enfocan en un estímulo específico, ignorando otros elementos importantes del entorno.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Carga cognitiva</h3>
+                    <p>Cantidad de información que un usuario puede procesar en un momento dado, influida por el diseño del entorno vial.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Ceguera por desatención</h3>
+                    <p>Incapacidad para percibir estímulos visibles debido a la concentración en otras tareas.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Ciclo de vida de la infraestructura vial</h3>
+                    <p>Etapas que garantizan la funcionalidad y seguridad de las vías, desde el diseño inicial hasta su mantenimiento y modernización.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Diseño centrado en el ser humano</h3>
+                    <p>Enfoque que prioriza las capacidades cognitivas, emocionales y físicas de los usuarios al diseñar infraestructuras viales.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Diseño inclusivo</h3>
+                    <p>Enfoque de diseño que considera las necesidades de todos los usuarios, incluidas las personas con discapacidades.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Factores humanos</h3>
+                    <p>Aspectos psicológicos, físicos y emocionales que influyen en el comportamiento de los actores viales.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Funciones forzosas</h3>
+                    <p>Elementos de diseño que guían y limitan las opciones de los usuarios para promover comportamientos seguros, como rotondas o barreras físicas.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Infraestructura inclusiva</h3>
+                    <p>Diseño de sistemas viales que garantiza un entorno accesible y seguro para todos los usuarios, independientemente de sus capacidades físicas o sensoriales.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Infraestructura para transporte alternativo</h3>
+                    <p>Espacios dedicados a ciclovías, peatones y otros modos de transporte no motorizados.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Intersecciones viales</h3>
+                    <p>Puntos donde convergen diferentes tipos de usuarios y trayectorias, considerados críticos para la seguridad vial.</p>
+                </div>
+            </div>
+
+            <!-- GRUPO R - Z -->
+            <div class="content-group hidden" id="group-R-Z">
+                <div class="definition-item">
+                    <h3>Redundancia sensorial</h3>
+                    <p>Uso de múltiples canales sensoriales (visual, auditivo, táctil) en la señalización para garantizar su efectividad en diversas condiciones.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Rotondas</h3>
+                    <p>Intersecciones circulares que obligan a los vehículos a reducir la velocidad y circular en un único sentido, mejorando la seguridad.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Seguridad vial</h3>
+                    <p>Conjunto de medidas y prácticas destinadas a prevenir accidentes y proteger la vida y la integridad de los actores viales.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Señales dinámicas</h3>
+                    <p>Señales que se adaptan en tiempo real a las condiciones del tráfico, clima o eventos específicos para optimizar la seguridad.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Señalización vial</h3>
+                    <p>Sistema de señales visuales, auditivas o táctiles que regula, advierte y guía el comportamiento de los actores viales.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Tecnologías avanzadas de asistencia al conductor (ADAS)</h3>
+                    <p>Sistemas que alertan a los conductores sobre riesgos y mejoran la interacción con la infraestructura vial.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Teoría del color</h3>
+                    <p>Uso estratégico de colores en señalización vial para captar atención, transmitir mensajes y generar respuestas emocionales.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Visión de túnel</h3>
+                    <p>Reducción del campo de visión periférica debido a la concentración excesiva en un solo elemento.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterContent(groupId, btnElement) {
+        // Ignorar clics si el botón está marcado como deshabilitado
+        if (btnElement.classList.contains('disabled')) return;
+
+        const groups = document.querySelectorAll('.content-group');
+        groups.forEach(group => {
+            group.classList.add('hidden');
+            group.classList.remove('animate-in');
+        });
+
+        const selectedGroup = document.getElementById('group-' + groupId);
+        if (selectedGroup) {
+            selectedGroup.classList.remove('hidden');
+            void selectedGroup.offsetWidth; 
+            selectedGroup.classList.add('animate-in');
+        }
+
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
