@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tendencias Globales en Seguridad Vial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0a0f1d;
+            --card-bg: rgba(20, 30, 55, 0.65);
+            --accent-blue: #00f2fe;
+            --accent-green: #4facfe;
+            --text-color: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 242, 254, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(79, 172, 254, 0.05) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* Contenedor del Scroll 3D */
+        .zoom-container {
+            position: relative;
+            width: 100%;
+        }
+
+        /* Espaciadores para controlar el desplazamiento del scroll */
+        .scroll-space {
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Escenario fijo donde ocurre la magia 3D */
+        .view-viewport {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            perspective: 1200px;
+            perspective-origin: 50% 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Elemento que se desplaza en el eje Z */
+        .zoom-content {
+            position: absolute;
+            width: 100%;
+            max-width: 850px;
+            padding: 20px;
+            transform-style: preserve-3d;
+            will-change: transform, opacity;
+            opacity: 0;
+            pointer-events: auto;
+            transition: opacity 0.3s ease;
+        }
+
+        .zoom-content.active {
+            opacity: 1;
+        }
+
+        /* Estilizado de las Tarjetas (Glassmorphism de alta fidelidad) */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 45px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+        }
+
+        /* Encabezados y jerarquía de texto */
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        p {
+            font-size: 1.05rem;
+            line-height: 1.75;
+            font-weight: 300;
+            color: var(--text-color);
+            text-align: left;
+        }
+
+        /* Indicador de Scroll Inferior */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            animation: pulse 2s infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .mouse-icon {
+            width: 20px;
+            height: 32px;
+            border: 2px solid var(--text-muted);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .mouse-icon::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 8px;
+            background-color: var(--accent-blue);
+            border-radius: 2px;
+            animation: scrollWheel 1.5s infinite;
+        }
+
+        /* Animaciones */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes scrollWheel {
+            0% { top: 6px; opacity: 1; }
+            100% { top: 18px; opacity: 0; }
+        }
+
+        /* Ajustes Responsivos */
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 30px;
+                margin: 0 15px;
+            }
+            h2 {
+                font-size: 1.8rem;
+            }
+            p {
+                font-size: 0.95rem;
+                line-height: 1.65;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-indicator" id="indicator">
+        <span>Desliza para avanzar</span>
+        <div class="mouse-icon"></div>
+    </div>
+
+    <div class="view-viewport">
+        
+        <div class="zoom-content active" id="slide-1">
+            <div class="glass-card">
+                <h2>2.2 Tendencias Globales en Seguridad Vial</h2>
+                <p>La seguridad vial ha evolucionado significativamente en las últimas décadas, mostrando avances destacados en países desarrollados y enfrentando retos persistentes en países de ingresos bajos y medios. Estos contrastes reflejan la interacción entre políticas públicas, infraestructura, tecnología y factores humanos.</p>
+            </div>
+        </div>
+
+        <div class="zoom-content" id="slide-2">
+            <div class="glass-card">
+                <p>En los países desarrollados, entre 2000 y 2011, se logró una notable reducción de las muertes en carretera. En países como Portugal y España, las víctimas mortales disminuyeron a la mitad, incluso en un contexto de creciente motorización. Este progreso puede atribuirse a una combinación de factores clave. En primer lugar, la concienciación de los usuarios sobre prácticas seguras, como el respeto por los límites de velocidad, el uso de cinturones de seguridad y la disminución de la conducción bajo los efectos del alcohol, ha jugado un papel crucial. Estas iniciativas, apoyadas por campañas educativas y estrictas sanciones, han transformado los comportamientos de los usuarios de la carretera (OCDE, 2019).</p>
+            </div>
+        </div>
+
+        <div class="zoom-content" id="slide-3">
+            <div class="glass-card">
+                <p>Otro factor decisivo ha sido la mejora de los dispositivos de seguridad en los vehículos. La adopción masiva de tecnologías como airbags, sistemas de frenos antibloqueo (ABS) y controles de tracción ha reducido drásticamente la gravedad de los accidentes. Este avance ha sido impulsado por la competencia entre fabricantes automotrices, que ha llevado a la innovación y a la accesibilidad de estas tecnologías (Elvik, 2009). Paralelamente, las inversiones en diseños de carreteras más seguros han contribuido significativamente a la reducción de accidentes. Elementos como rotondas, barreras de contención y una señalización clara y bien ubicada han sido esenciales para eliminar tramos peligrosos y mejorar la seguridad colectiva.</p>
+            </div>
+        </div>
+
+        <div class="zoom-content" id="slide-4">
+            <div class="glass-card">
+                <p>Los países de ingresos bajos y medios cargan con una parte desproporcionada del problema de la seguridad vial: en conjunto concentran el 92% de las muertes por siniestros de tránsito, a pesar de contar con flotas vehiculares mucho menores que las de los países ricos. El contraste es especialmente marcado en los países de renta baja, que poseen menos del 1% de los vehículos del mundo y, sin embargo, soportan el 13% de las muertes globales; en el extremo opuesto, los países de renta alta, dueños del 28% de la flota mundial, solo registran el 8% de las fatalidades (OMS, 2023). Detrás de esta brecha se combinan varios factores: el crecimiento acelerado del parque automotor sin medidas de seguridad paralelas, la convivencia cotidiana entre usuarios vulnerables (peatones y ciclistas) y el tráfico motorizado, y una infraestructura vial que con frecuencia no recibe el mantenimiento necesario. La ausencia de planificación integral hace que estos riesgos se perpetúen en el tiempo.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="zoom-container">
+        <div class="scroll-space" id="space-1"></div>
+        <div class="scroll-space" id="space-2"></div>
+        <div class="scroll-space" id="space-3"></div>
+        <div class="scroll-space" id="space-4"></div>
+    </div>
+
+    <script>
+        const slides = [
+            document.getElementById('slide-1'),
+            document.getElementById('slide-2'),
+            document.getElementById('slide-3'),
+            document.getElementById('slide-4')
+        ];
+
+        const indicator = document.getElementById('indicator');
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const viewportHeight = window.innerHeight;
+            
+            // Calculamos en qué sección del scroll nos encontramos de forma matemática fluida
+            const progress = scrollTop / viewportHeight;
+            
+            slides.forEach((slide, index) => {
+                // Cada sección maneja su propio desfase en el eje Z (Profundidad)
+                const offset = progress - index;
+                
+                // Efecto Túnel Z: El bloque actual se acerca, los pasados se van al frente y se desvanecen
+                // Multiplicamos por un factor de píxeles (ej. 1500px) para el recorrido 3D
+                const zTranslation = -offset * 1500; 
+                
+                // Control estricto de opacidad para transiciones perfectas y legibles
+                let opacity = 0;
+                if (offset >= -0.5 && offset <= 0.5) {
+                    // Totalmente visible en el centro de su sección
+                    opacity = 1 - Math.abs(offset) * 2;
+                    slide.style.pointerEvents = "auto";
+                } else if (offset > 0.5 && offset < 1) {
+                    // Desvanecimiento controlado saliendo hacia adelante
+                    opacity = 1 - offset;
+                    slide.style.pointerEvents = "none";
+                } else {
+                    slide.style.pointerEvents = "none";
+                }
+
+                // Aplicamos la transformación espacial 3D
+                slide.style.transform = `translateZ(${zTranslation}px)`;
+                slide.style.opacity = opacity;
+
+                if (opacity > 0.05) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // Ocultar el indicador de scroll cuando ya se ha avanzado significativamente
+            if (scrollTop > 100) {
+                indicator.style.opacity = '0';
+                indicator.style.transition = 'opacity 0.5s ease';
+            } else {
+                indicator.style.opacity = '1';
+            }
+        });
+
+        // Inicialización correcta de la perspectiva en el renderizado inicial
+        window.dispatchEvent(new Event('scroll'));
+    </script>
+</body>
+</html>
