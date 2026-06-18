@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjetas Interactivas - Seguridad Vial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            color: #ffffff;
+            position: relative;
+        }
+
+        /* Instrucción flotante con Glassmorphism */
+        .floating-instruction {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            color: #e2e8f0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .floating-instruction::before {
+            content: '💡';
+            font-size: 1.1rem;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        /* Estilo de las Tarjetas */
+        .card {
+            position: relative;
+            height: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Imágenes de fondo temáticas */
+        .card-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: scale 0.5s ease;
+            z-index: 1;
+        }
+
+        .card:hover .card-bg {
+            scale: 1.1;
+        }
+
+        .card-1 .card-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=600');
+        }
+        .card-2 .card-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&q=80&w=600');
+        }
+        .card-3 .card-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1562613528-4d0856802a04?auto=format&fit=crop&q=80&w=600');
+        }
+        .card-4 .card-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&q=80&w=600');
+        }
+
+        /* Contenido con Efecto Glassmorphism */
+        .card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 2;
+            text-align: left;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1.4;
+        }
+
+        /* Ventanas Emergentes (Modales) */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Ventana Emergente con Glassmorphism Avanzado */
+        .modal-body {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            max-width: 650px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: left;
+            position: relative;
+        }
+
+        .modal.active .modal-body {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ffffff;
+            border-left: 5px solid #38bdf8;
+            padding-left: 12px;
+        }
+
+        .modal-text {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #e2e8f0;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="floating-instruction">
+        Haga clic sobre las tarjetas para ampliar la información.
+    </div>
+
+    <div class="container">
+        <div class="card card-1" onclick="openModal('modal-1')">
+            <div class="card-bg"></div>
+            <div class="card-content">
+                <h2 class="card-title">Tecnologías dinámicas</h2>
+            </div>
+        </div>
+
+        <div class="card card-2" onclick="openModal('modal-2')">
+            <div class="card-bg"></div>
+            <div class="card-content">
+                <h2 class="card-title">Elementos visuales impactantes</h2>
+            </div>
+        </div>
+
+        <div class="card card-3" onclick="openModal('modal-3')">
+            <div class="card-bg"></div>
+            <div class="card-content">
+                <h2 class="card-title">Variación en el diseño</h2>
+            </div>
+        </div>
+
+        <div class="card card-4" onclick="openModal('modal-4')">
+            <div class="card-bg"></div>
+            <div class="card-content">
+                <h2 class="card-title">Educación y concienciación</h2>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-1" class="modal" onclick="closeModal(event, 'modal-1')">
+        <div class="modal-body">
+            <button class="modal-close" onclick="document.getElementById('modal-1').classList.remove('active')">&times;</button>
+            <h2 class="modal-title">Tecnologías dinámicas</h2>
+            <p class="modal-text">Las señales electrónicas variables, que ajustan su mensaje en función de las condiciones del tráfico o el clima, han demostrado ser altamente efectivas para captar la atención de los conductores frecuentes. Un límite de velocidad dinámico que se reduce durante lluvias intensas no solo mejora la percepción del riesgo, sino que también refuerza la importancia de la señal en el momento adecuado (OCDE, 2019).</p>
+        </div>
+    </div>
+
+    <div id="modal-2" class="modal" onclick="closeModal(event, 'modal-2')">
+        <div class="modal-body">
+            <button class="modal-close" onclick="document.getElementById('modal-2').classList.remove('active')">&times;</button>
+            <h2 class="modal-title">Elementos visuales impactantes</h2>
+            <p class="modal-text">El uso de señales con luces intermitentes o materiales reflectantes de alta intensidad puede ayudar a captar la atención de los conductores. La integración de bandas sonoras en el pavimento, combinadas con señales visuales, ha reducido significativamente la incidencia de accidentes en carreteras rurales (García, Pérez y Martínez, 2020).</p>
+        </div>
+    </div>
+
+    <div id="modal-3" class="modal" onclick="closeModal(event, 'modal-3')">
+        <div class="modal-body">
+            <button class="modal-close" onclick="document.getElementById('modal-3').classList.remove('active')">&times;</button>
+            <h2 class="modal-title">Variación en el diseño</h2>
+            <p class="modal-text">En lugar de mantener diseños estáticos y uniformes, las señales pueden incorporar cambios sutiles en sus colores, símbolos o formatos. En zonas escolares, el uso de colores brillantes y formas dinámicas, como figuras de niños en movimiento, puede aumentar la percepción de relevancia de estas señales.</p>
+        </div>
+    </div>
+
+    <div id="modal-4" class="modal" onclick="closeModal(event, 'modal-4')">
+        <div class="modal-body">
+            <button class="modal-close" onclick="document.getElementById('modal-4').classList.remove('active')">&times;</button>
+            <h2 class="modal-title">Educación y concienciación</h2>
+            <p class="modal-text">Las campañas educativas pueden enfatizar la importancia de mantener una atención activa, incluso en rutas familiares. Según Wickens, Lee y Gordon (2019), las estrategias educativas combinadas con cambios en el diseño vial tienen un impacto mucho mayor en la modificación del comportamiento a largo plazo.</p>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(event, id) {
+            if (event.target.id === id) {
+                document.getElementById(id).classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
