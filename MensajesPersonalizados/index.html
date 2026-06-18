@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barras Desplegables Dinámicas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Estilos Generales y Fondo Oscuro Moderno */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0f172a; /* Fondo oscuro */
+            color: #cbd5e1; /* Texto secundario */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Instrucción Flotante en la parte superior derecha */
+        .floating-instruction {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background-color: rgba(30, 41, 59, 0.7); /* slate-800 con transparencia */
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            backdrop-filter: blur(8px); /* Efecto de vidrio esmerilado */
+            padding: 10px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            pointer-events: none; /* No interfiere con los clics en la pantalla */
+        }
+
+        /* Pequeño punto indicador parpadeante */
+        .floating-instruction::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: #38bdf8; /* Color azul celeste moderno */
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        /* Contenedor de las barras */
+        .accordion-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 800px;
+            width: 100%;
+            margin-top: 60px; /* Espacio para que no choque con la instrucción en pantallas pequeñas */
+        }
+
+        /* Estilo de la barra contenedora (details) */
+        details {
+            background-color: #1e293b; /* Fondo de la barra */
+            border: 1px solid #334155;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Cambios al pasar el mouse sobre la barra */
+        details:hover {
+            border-color: #475569;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Cuando la barra está abierta */
+        details[open] {
+            border-color: #64748b;
+            background-color: #1e293b;
+        }
+
+        /* Estilo de la cabecera/botón que se clickea (summary) */
+        summary {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #f8fafc;
+            cursor: pointer;
+            user-select: none;
+            list-style: none; /* Quita la flecha nativa del navegador */
+            transition: background-color 0.2s ease;
+        }
+
+        /* Quitar flecha nativa en navegadores Safari */
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* Efecto de click/pulsación en la cabecera */
+        summary:active {
+            background-color: #151f30;
+        }
+
+        /* Añadir un icono de flecha personalizado y moderno a la derecha */
+        summary::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid #94a3b8;
+            border-bottom: 2px solid #94a3b8;
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+            margin-left: 15px;
+            flex-shrink: 0;
+        }
+
+        /* Rotación de la flecha cuando se abre */
+        details[open] summary::after {
+            transform: rotate(-135deg);
+            border-color: #f8fafc;
+        }
+
+        /* Contenido desplegable */
+        .content {
+            padding: 0 24px 24px 24px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            animation: slideDown 0.3s ease-out; /* Animación suave al abrir */
+        }
+
+        /* Resaltado en negrita */
+        .highlight {
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        /* Animaciones */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 6px rgba(56, 189, 248, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+            }
+        }
+
+        /* Ajuste responsivo para pantallas móviles */
+        @media (max-width: 600px) {
+            body {
+                flex-direction: column;
+                justify-content: flex-start;
+            }
+            .floating-instruction {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-top: 20px;
+                margin-bottom: -20px;
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="floating-instruction">
+        Haga clic sobre la barra para ampliar la información
+    </div>
+
+    <div class="accordion-container">
+        
+        <details>
+            <summary>Mensajes personalizados en tiempo real</summary>
+            <div class="content">
+                <p>por ejemplo, los límites de velocidad pueden ajustarse automáticamente durante lluvias intensas para reducir los riesgos de accidentes. Un estudio de Elvik (2009) demostró que las señales dinámicas reducen la incidencia de colisiones en autopistas hasta en un <span class="highlight">25%.</span></p>
+            </div>
+        </details>
+
+        <details>
+            <summary>Integración con sistemas de vehículos conectados</summary>
+            <div class="content">
+                <p>las señales dinámicas también pueden interactuar con los sistemas avanzados de asistencia al conductor (ADAS), enviando alertas directamente al panel de control del vehículo. Esto no solo mejora la respuesta del conductor, sino que también prepara el camino para la implementación de vehículos autónomos (Wickens, Lee, & Gordon, 2019).</p>
+            </div>
+        </details>
+
+    </div>
+
+</body>
+</html>
