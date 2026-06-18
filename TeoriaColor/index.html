@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estantería de Trofeos Cromáticos Futurista</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #05050a;
+            --font-main: 'Poppins', sans-serif;
+            --neon-red: #ff3366;
+            --neon-yellow: #ffcc00;
+            --neon-green: #33ff66;
+            --neon-blue: #3333ff;
+            --neon-white: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #e0e0e6;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 40px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(20, 20, 35, 0.8) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(15, 15, 25, 0.8) 0px, transparent 50%);
+        }
+
+        h1 {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            font-size: 1.6rem;
+            padding: 0 15px;
+        }
+
+        p.subtitle {
+            font-weight: 300;
+            text-align: center;
+            max-width: 800px;
+            margin-bottom: 40px;
+            color: #8a8a9e;
+            font-size: 0.9rem;
+            padding: 0 20px;
+        }
+
+        /* Contenedor Global del Carrusel con Controles */
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 1400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Contenedor del Carrusel / Estantería */
+        .trophy-shelf-carousel {
+            display: flex;
+            gap: 25px;
+            padding: 30px 20px 50px 20px;
+            overflow-x: auto;
+            width: 100%;
+            scroll-behavior: smooth;
+            snap-type: x mandatory;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) #05050a;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Línea base de la estantería (Efecto Láser/Neón) */
+        .trophy-shelf-carousel::after {
+            content: '';
+            position: absolute;
+            bottom: 35px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-red), var(--neon-yellow), var(--neon-green), var(--neon-blue), var(--neon-white));
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Estilo para navegadores Webkit (Scrollbar) */
+        .trophy-shelf-carousel::-webkit-scrollbar {
+            height: 6px;
+        }
+        .trophy-shelf-carousel::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .trophy-shelf-carousel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        /* Tarjeta Trofeo Individual */
+        .trophy-card {
+            flex: 0 0 320px;
+            snap-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 2;
+            margin-bottom: 15px;
+            /* Alineación del texto modificada a la izquierda */
+            text-align: left; 
+        }
+
+        /* Contenedor del Trofeo/Orbe Superior */
+        .trophy-display {
+            display: flex;
+            justify-content: flex-start; /* Alinea el orbe a la izquierda */
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        /* El "Trofeo" u Orbe de Energía Cuántica */
+        .quantum-orb {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantum-orb::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: float 3s ease-in-out infinite alternate;
+        }
+
+        /* Títulos de las Tarjetas */
+        .trophy-card h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Cuerpo del texto */
+        .trophy-card p.content {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #b0b0c0;
+            margin: 0;
+            font-weight: 300;
+        }
+
+        /* --- Variaciones de Color --- */
+        .card-red { --current-glow: var(--neon-red); }
+        .card-red h2 { color: #ff4d79; text-shadow: 0 0 10px rgba(255, 51, 102, 0.2); }
+        .card-red .quantum-orb::before { background: var(--neon-red); box-shadow: 0 0 15px var(--neon-red); }
+
+        .card-yellow { --current-glow: var(--neon-yellow); }
+        .card-yellow h2 { color: #ffee33; text-shadow: 0 0 10px rgba(255, 204, 0, 0.2); }
+        .card-yellow .quantum-orb::before { background: var(--neon-yellow); box-shadow: 0 0 15px var(--neon-yellow); }
+
+        .card-green { --current-glow: var(--neon-green); }
+        .card-green h2 { color: #55ff88; text-shadow: 0 0 10px rgba(51, 255, 102, 0.2); }
+        .card-green .quantum-orb::before { background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
+
+        .card-blue { --current-glow: var(--neon-blue); }
+        .card-blue h2 { color: #5577ff; text-shadow: 0 0 10px rgba(51, 51, 255, 0.2); }
+        .card-blue .quantum-orb::before { background: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); }
+
+        .card-bw { --current-glow: var(--neon-white); }
+        .card-bw h2 { color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
+        .card-bw .quantum-orb::before { 
+            background: linear-gradient(135deg, #fff 50%, #111 50%); 
+            box-shadow: 0 0 15px rgba(255,255,255,0.4); 
+        }
+
+        /* --- Efectos Hover (PC) --- */
+        @media (hover: hover) {
+            .trophy-card:hover {
+                transform: translateY(-12px) scale(1.02);
+                background: rgba(255, 255, 255, 0.06);
+                border-color: var(--current-glow);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(var(--current-glow), 0.15);
+            }
+            .trophy-card:hover .quantum-orb {
+                animation: spin 4s linear infinite;
+            }
+        }
+
+        /* Flechas de Navegación UI */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 45px;
+            background: rgba(5, 5, 10, 0.8);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.4);
+        }
+
+        .arrow-left { left: 10px; }
+        .arrow-right { right: 10px; }
+
+        /* Indicador Inferior */
+        .scroll-instruction {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #5a5a70;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .scroll-instruction span {
+            animation: pulse 2s infinite;
+        }
+
+        /* --- RESPONSIVIDAD --- */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.4rem; }
+            p.subtitle { font-size: 0.85rem; margin-bottom: 25px; }
+            
+            .trophy-card {
+                flex: 0 0 82vw;
+                max-width: 320px;
+                padding: 20px 18px;
+            }
+
+            .trophy-shelf-carousel {
+                gap: 15px;
+                padding-bottom: 40px;
+            }
+            
+            .arrow-left { left: 2px; }
+            .arrow-right { right: 2px; }
+        }
+
+        /* Animaciones */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-5px); }
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Psicología del color y contrastes</h1>
+    <p class="subtitle">cada color tiene asociaciones psicológicas que influyen en la manera en que los usuarios interpretan las señales:</p>
+
+    <div class="carousel-wrapper">
+        
+        <div class="nav-arrow arrow-left" onclick="navigateShelf('left')">‹</div>
+        <div class="nav-arrow arrow-right" onclick="navigateShelf('right')">›</div>
+
+        <div class="trophy-shelf-carousel">
+
+            <div class="trophy-card card-red">
+                <div class="trophy-display">
+                    <div class="quantum-orb"></div>
+                </div>
+                <h2>Rojo</h2>
+                <p class="content">asociado al peligro, prohibición y urgencia, el rojo activa una respuesta de alerta inmediata. Este color, gracias a su longitud de onda, es altamente visible y destaca incluso en entornos complejos. Por ello, es utilizado en señales de "alto", "prohibido el paso" y "pare" (Gibson, 1979). Su capacidad para captar la atención se debe a su contraste natural con los tonos circundantes.</p>
+            </div>
+
+            <div class="trophy-card card-yellow">
+                <div class="trophy-display">
+                    <div class="quantum-orb"></div>
+                </div>
+                <h2>Amarillo</h2>
+                <p class="content">este color es utilizado para advertencias y precaución. Es altamente visible en condiciones de luz diurna y se percibe como un llamado a la atención anticipada, por lo que se utiliza en señales de zonas escolares, curvas peligrosas y áreas de cruce de animales (Wickens, Lee, & Gordon, 2019). Su impacto psicológico crea una sensación de inminencia, preparando al usuario para ajustar su comportamiento.</p>
+            </div>
+
+            <div class="trophy-card card-green">
+                <div class="trophy-display">
+                    <div class="quantum-orb"></div>
+                </div>
+                <h2>Verde</h2>
+                <p class="content">asociado con direcciones y salidas, el verde genera una sensación de calma y confianza. Este color es ideal para información que no requiere decisiones inmediatas, como guías de carretera o señalización hacia servicios (Mintransporte, 2015)</p>
+            </div>
+
+            <div class="trophy-card card-blue">
+                <div class="trophy-display">
+                    <div class="quantum-orb"></div>
+                </div>
+                <h2>Azul</h2>
+                <p class="content">utilizado en señales informativas o de servicios, como estaciones de gasolina o áreas de descanso, el azul tiene un impacto neutral, lo que permite que los usuarios procesen la información sin sentirse apremiados.</p>
+            </div>
+
+            <div class="trophy-card card-bw">
+                <div class="trophy-display">
+                    <div class="quantum-orb"></div>
+                </div>
+                <h2>Blanco y Negro</h2>
+                <p class="content">estos colores, frecuentemente usados en señales reglamentarias como límites de velocidad, enfatizan la claridad y la neutralidad, asegurando que el mensaje sea directo y fácil de comprender (Elvik, 2009).</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="scroll-instruction">
+        <span>◀ Presiona los botones o desliza para centrar los trofeos ▶</span>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+
+        function navigateShelf(direction) {
+            const carousel = document.querySelector('.trophy-shelf-carousel');
+            const cards = document.querySelectorAll('.trophy-card');
+            const totalCards = cards.length;
+
+            // Calcular el índice de la tarjeta destino
+            if (direction === 'right') {
+                currentIndex = (currentIndex + 1) < totalCards ? currentIndex + 1 : currentIndex;
+            } else {
+                currentIndex = (currentIndex - 1) >= 0 ? currentIndex - 1 : currentIndex;
+            }
+
+            const targetCard = cards[currentIndex];
+            
+            // Cálculo exacto del centro matemático del contenedor
+            const carouselWidth = carousel.offsetWidth;
+            const cardWidth = targetCard.offsetWidth;
+            const cardLeft = targetCard.offsetLeft;
+            const targetScrollPosition = cardLeft - (carouselWidth / 2) + (cardWidth / 2);
+
+            // Ejecuta el desplazamiento perfecto hacia el centro
+            carousel.scrollTo({
+                left: targetScrollPosition,
+                behavior: 'smooth'
+            });
+        }
+
+        // Sincronizar el índice actual si el usuario desliza de forma táctil de manera manual
+        document.querySelector('.trophy-shelf-carousel').addEventListener('scroll', debounce(() => {
+            const carousel = document.querySelector('.trophy-shelf-carousel');
+            const cards = document.querySelectorAll('.trophy-card');
+            const carouselCenter = carousel.scrollLeft + (carousel.offsetWidth / 2);
+            
+            let minDistance = Infinity;
+            let closestIndex = 0;
+
+            cards.forEach((card, index) => {
+                const cardCenter = card.offsetLeft + (card.offsetWidth / 2);
+                const distance = Math.abs(carouselCenter - cardCenter);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestIndex = index;
+                }
+            });
+            currentIndex = closestIndex;
+        }, 150));
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+    </script>
+</body>
+</html>
