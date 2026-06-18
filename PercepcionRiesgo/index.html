@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrusel 3D Estilo Cristal - Corregido</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-base-bg: rgba(25, 25, 25, 0.75);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-color: #e6edf3;
+            --accent-color: #58a6ff;
+            --instruction-color: #8b949e;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            justify-content: space-between;
+            padding: 40px 0;
+            box-sizing: border-box;
+        }
+
+        /* Contenedor principal de perspectiva */
+        .carousel-perspective {
+            perspective: 1200px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .carousel-container {
+            width: 100%;
+            max-width: 1100px;
+            height: 500px;
+            position: relative;
+            transform-style: preserve-3d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Tarjetas con Efecto Cristal Atenuado de Alta Legibilidad */
+        .card {
+            position: absolute;
+            width: 380px;
+            height: 480px;
+            background-color: var(--card-base-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 35px;
+            box-sizing: border-box;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            backface-visibility: hidden;
+            /* Suavizado completo de la animación 3D */
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Estilos de Texto */
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 25px;
+            line-height: 1.2;
+        }
+
+        .card p {
+            font-size: 0.98rem;
+            line-height: 1.7;
+            color: #e2e8f0; /* Color ligeramente más claro para mejorar legibilidad */
+            margin: 0;
+            text-align: left;
+        }
+
+        /* Controles de navegación */
+        .controls-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .controls {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.4rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: white;
+            color: black;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.15;
+            cursor: not-allowed;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Instrucción */
+        .instruction {
+            font-size: 0.9rem;
+            color: var(--instruction-color);
+            margin-bottom: 5px;
+            font-weight: 400;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="carousel-perspective">
+        <div class="carousel-container" id="carousel">
+            
+            <div class="card">
+                <h2>Percepción de riesgo</h2>
+                <p>El concepto de percepción de riesgo es fundamental en este tipo de infraestructura. Los usuarios ajustan su comportamiento en función de la percepción de peligro que tienen en su entorno. La infraestructura que proporciona carriles exclusivos y separación física fomenta un ambiente en el cual los usuarios perciben menos riesgos, lo que les permite moverse con mayor precaución y atención hacia otros actores viales <br>(Wilde, 1982).</p>
+            </div>
+
+            <div class="card">
+                <h2>Carga cognitiva reducida</h2>
+                <p>La infraestructura para medios alternativos también influye en la carga cognitiva de los usuarios. La teoría de la carga cognitiva sugiere que los actores viales toman mejores decisiones cuando no están sobrecargados de información o de estímulos en su entorno. Al reducir la complejidad de la interacción entre distintos tipos de usuarios, se facilita la atención y se optimiza la seguridad vial en entornos complejos de tránsito compartido <br>(Sweller, 1988).</p>
+            </div>
+
+            <div class="card">
+                <h2>Cooperación entre usuarios</h2>
+                <p>Esta percepción de seguridad genera un comportamiento de cooperación y respeto entre los distintos tipos de usuarios, evitando conflictos y mejorando la convivencia en la vía pública <br>(Wickens, Lee, & Gordon, 2019).</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="controls-wrapper">
+        <p class="instruction">Haga clic sobre los botones &lt; y &gt; para interactuar y ampliar la información</p>
+        <div class="controls">
+            <button class="nav-btn" id="prevBtn">&#10094;</button>
+            <button class="nav-btn" id="nextBtn">&#10095;</button>
+        </div>
+    </div>
+
+    <script>
+        const cards = document.querySelectorAll('.card');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        let currentIndex = 0;
+        const totalCards = cards.length;
+
+        function updateCarousel() {
+            cards.forEach((card, index) => {
+                // Calculamos la distancia de cada tarjeta respecto a la activa
+                const distance = index - currentIndex;
+
+                if (distance === 0) {
+                    // Tarjeta Activa (Centro)
+                    card.style.transform = "translateX(0) rotateY(0deg) translateZ(140px)";
+                    card.style.opacity = "1";
+                    card.style.zIndex = "10";
+                    card.style.pointerEvents = "auto";
+                } else if (distance === 1) {
+                    // Tarjeta a la Derecha
+                    card.style.transform = "translateX(280px) rotateY(-45deg) translateZ(0px)";
+                    card.style.opacity = "0.7";
+                    card.style.zIndex = "5";
+                    card.style.pointerEvents = "none";
+                } else if (distance === -1) {
+                    // Tarjeta a la Izquierda
+                    card.style.transform = "translateX(-280px) rotateY(45deg) translateZ(0px)";
+                    card.style.opacity = "0.7";
+                    card.style.zIndex = "5";
+                    card.style.pointerEvents = "none";
+                } else {
+                    // Cualquier otra tarjeta fuera de los márgenes inmediatos
+                    if (distance > 1) {
+                        card.style.transform = "translateX(500px) rotateY(-60deg) translateZ(-100px)";
+                    } else {
+                        card.style.transform = "translateX(-500px) rotateY(60deg) translateZ(-100px)";
+                    }
+                    card.style.opacity = "0";
+                    card.style.zIndex = "1";
+                    card.style.pointerEvents = "none";
+                }
+            });
+
+            // Bloqueo de navegación lineal (No es infinito)
+            prevBtn.disabled = (currentIndex === 0);
+            nextBtn.disabled = (currentIndex === totalCards - 1);
+        }
+
+        // Eventos manuales controlados por botones
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < totalCards - 1) {
+                currentIndex++;
+                updateCarousel();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        });
+
+        // Inicialización
+        updateCarousel();
+    </script>
+</body>
+</html>
