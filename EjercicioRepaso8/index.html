@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repaso: Infraestructura, Comportamiento y Diseño Inclusivo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        :root {
+            --primary: #27728F;
+            --primary-dark: #1C546B;
+            --primary-light: #EBF1F4;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-size: 17px;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7f9;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #main-container {
+            width: 95%;
+            max-width: 1000px;
+            height: 870px; 
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(39, 114, 143, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2.5rem 3.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) #f1f1f1;
+        }
+
+        .text-custom { color: var(--primary); }
+        .bg-custom { background-color: var(--primary); }
+
+        .btn-action {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 3.5rem;
+            border-radius: 99px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+        }
+        .btn-action:hover:not(:disabled) {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(39, 114, 143, 0.3);
+        }
+
+        .option-card {
+            transition: all 0.2s ease;
+            border: 2px solid #f1f5f9;
+            cursor: pointer;
+        }
+        
+        .option-card.selected {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .option-card.locked { pointer-events: none; }
+
+        /* Estilos de Arrastrar y Soltar / Completar Espacios */
+        .drop-zone-inline {
+            border-bottom: 2px dashed #94a3b8;
+            background-color: #f8fafc;
+            padding: 2px 8px;
+            min-height: 40px;
+            min-width: 210px;
+            max-width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.3s;
+            vertical-align: middle;
+            margin: 4px;
+        }
+        .drop-zone-inline.active { 
+            border-color: var(--primary); 
+            background: var(--primary-light); 
+        }
+        
+        .drag-item-inline {
+            background: white;
+            border: 2px solid var(--primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: grab;
+            font-weight: 500;
+            font-size: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            color: #1e293b;
+            line-height: 1.3;
+            transition: transform 0.2s, background-color 0.2s;
+            text-align: center;
+            user-select: none;
+        }
+        .drag-item-inline:active { cursor: grabbing; transform: scale(0.97); }
+        .drag-item-inline.selected-for-click {
+            background-color: var(--primary-light);
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 3px rgba(39, 114, 143, 0.4);
+        }
+        .drag-item-inline.placed-item {
+            margin: 0;
+            width: 100%;
+        }
+
+        .circle-bar { 
+            fill: none; 
+            stroke: var(--primary); 
+            stroke-width: 10; 
+            stroke-linecap: round; 
+            transition: stroke-dashoffset 1.5s ease-out;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="main-container">
+        
+        <!-- PANTALLA INICIAL -->
+        <div id="screen-start" class="scroll-content flex flex-col items-center justify-center text-center animate__animated animate__fadeIn">
+            <h1 class="text-4xl font-bold text-custom mb-4 leading-tight">Evaluación de Repaso</h1>
+            <p class="text-2xl mb-4 text-slate-600 font-semibold">Infraestructura y Comportamiento desde el Enfoque Humano</p>
+            <p class="mb-10 max-w-2xl text-slate-500 text-lg">Pone a prueba tus conocimientos sobre factores cognitivos, funciones forzosas, diseño inclusivo para actores vulnerables y la gestión de la atención frente a los estímulos de la vía.</p>
+            <button onclick="startQuiz()" class="btn-action text-xl shadow-lg">INICIAR REPASO</button>
+        </div>
+
+        <!-- PANTALLA DE CUESTIONARIO -->
+        <div id="screen-quiz" class="hidden flex flex-col h-full">
+            <div class="px-14 pt-8 flex justify-between items-center bg-white z-10">
+                <span id="q-number" class="font-bold text-custom text-sm tracking-widest uppercase"></span>
+                <div class="w-48 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div id="progress-fill" class="h-full bg-custom transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="scroll-content animate__animated animate__fadeIn" id="quiz-body">
+                <p id="q-instruction" class="text-custom font-bold italic mb-2 text-base"></p>
+                <div id="case-box" class="hidden mb-4 p-4 bg-slate-50 border-l-4 border-slate-400 text-slate-700 text-base rounded-r-xl"></div>
+                
+                <!-- Enunciado de la Pregunta -->
+                <div id="question-text-container" class="mb-6 leading-relaxed text-slate-800">
+                    <h2 id="q-text" class="text-lg font-semibold leading-snug text-slate-800 border-l-4 border-[#27728F] pl-4 py-1 bg-slate-50"></h2>
+                </div>
+
+                <!-- Contenedor para Opción Múltiple / VF -->
+                <div id="options-container" class="space-y-3"></div>
+
+                <!-- Contenedor Especial de Completar Textos (Drag & Drop) -->
+                <div id="fill-blank-container" class="hidden">
+                    <div class="mb-6 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+                        <p class="text-xs font-bold mb-3 uppercase text-slate-500 tracking-wider text-center">Opciones para arrastrar (o hacer clic y luego pulsar el espacio vacío):</p>
+                        <div id="drag-bank" class="flex flex-wrap justify-center gap-2 min-h-[50px] p-2 bg-white rounded-xl border border-dashed border-slate-200"></div>
+                    </div>
+                </div>
+
+                <!-- Alerta Flotante Interna de Validación (Sin alert() nativo) -->
+                <div id="warning-box" class="hidden mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 font-medium text-sm flex items-center justify-center animate__animated animate__shakeX">
+                    ⚠️ Por favor, responde o completa todos los espacios de la pregunta antes de validar.
+                </div>
+
+                <!-- Caja de Retroalimentación -->
+                <div id="feedback-box" class="hidden mt-6 p-5 rounded-2xl border-2 animate__animated animate__fadeInUp text-base">
+                    <p id="feedback-title" class="font-bold text-lg mb-1"></p>
+                    <div id="feedback-body" class="leading-relaxed text-slate-700"></div>
+                    <button id="btn-continue" onclick="nextStep()" class="mt-4 bg-slate-800 text-white px-8 py-2 rounded-xl hover:bg-black transition-all font-bold text-sm">Continuar</button>
+                </div>
+
+                <button id="btn-validate" onclick="validateAnswer()" class="btn-action w-full mt-6 shadow-xl text-lg">Validar Respuesta</button>
+            </div>
+        </div>
+
+        <!-- PANTALLA DE RESULTADOS -->
+        <div id="screen-results" class="hidden scroll-content flex flex-col items-center">
+            <h2 class="text-4xl font-bold mb-2 text-custom text-center">Repaso Finalizado</h2>
+            
+            <div class="flex flex-col items-center justify-center my-4">
+                <div class="relative flex items-center justify-center">
+                    <svg class="w-56 h-56 -rotate-90">
+                        <circle cx="112" cy="112" r="95" stroke="#f1f5f9" stroke-width="10" fill="none"></circle>
+                        <circle id="final-circle" cx="112" cy="112" r="95" class="circle-bar" stroke-dasharray="596" stroke-dashoffset="596"></circle>
+                    </svg>
+                    <div class="absolute text-5xl font-black text-slate-800"><span id="result-percent">0</span>%</div>
+                </div>
+            </div>
+
+            <p id="result-score" class="text-xl font-bold mb-4 text-slate-700 text-center"></p>
+            <div id="result-msg" class="w-full max-w-2xl mb-6 p-5 bg-slate-50 rounded-2xl italic text-slate-600 text-base text-center"></div>
+            
+            <button onclick="location.reload()" class="btn-action mb-8">Reiniciar Repaso</button>
+
+            <!-- Contenedor del compilado detallado de preguntas y correcciones -->
+            <div class="w-full max-w-3xl border-t border-slate-200 pt-8 mt-4 text-left">
+                <h3 class="text-2xl font-bold text-custom mb-6 text-center">Revisión de respuestas</h3>
+                <div id="summary-cards" class="space-y-6">
+                    <!-- Se genera dinámicamente desde JavaScript -->
+                </div>
+            </div>
+
+            <button onclick="location.reload()" class="btn-action mt-10 mb-6">Reiniciar Repaso</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                type: "vf",
+                instruction: "Seleccione Verdadero o Falso",
+                question: "1. Un diseño vial centrado en el ser humano contribuye a reducir errores y mejorar la seguridad, al considerar las capacidades y limitaciones perceptivas, cognitivas y físicas de los usuarios.",
+                options: [
+                    {t: "Verdadero", c: true},
+                    {t: "Falso", c: false}
+                ],
+                feedback: "El diseño vial influye directamente en el comportamiento de los usuarios. Señales claras, visibles y comprensibles reducen la carga cognitiva, disminuyen confusiones y ayudan a prevenir errores y siniestros."
+            },
+            {
+                type: "ms",
+                instruction: "Seleccione la respuesta correcta",
+                question: "2. ¿Cuáles de los siguientes son ejemplos de funciones forzosas?",
+                options: [
+                    {t: "a) Rotondas, barreras de contención.", c: true},
+                    {t: "b) Pasos peatonales.", c: false},
+                    {t: "c) Señales ocultas detrás de árboles.", c: false},
+                    {t: "d) Comparendos de tránsito.", c: false}
+                ],
+                feedback: "Las funciones forzosas son elementos de diseño que condicionan el comportamiento de los usuarios, promoviendo acciones seguras al limitar las opciones disponibles y reducir la posibilidad de errores."
+            },
+            {
+                type: "vf",
+                instruction: "Seleccione Verdadero o Falso",
+                question: "3. Las tecnologías dinámicas en señalización reducen la adaptación sensorial y aumentan la atención de los conductores frecuentes.",
+                options: [
+                    {t: "Verdadero", c: true},
+                    {t: "Falso", c: false}
+                ],
+                feedback: "La variación rompe la monotonía y capta nuevamente la atención."
+            },
+            {
+                type: "fill",
+                instruction: "Arrastrar y soltar texto",
+                case: "Caso 1 – Señalización deficiente en clima adverso: En un sector rural con neblina, la señal de curva peligrosa no es reflectiva y un bus se sale de la vía.",
+                question: "4. El umbral de estímulo detectable en este suceso se dio porque {drop1}, una posible solución es: {drop2}",
+                options: [
+                    { key: "drop1", correct: "La señal no superó el umbral perceptivo en condiciones adversas." },
+                    { key: "drop2", correct: "Implementar materiales reflectivos, señales luminosas intermitentes y redundancia sensorial." }
+                ],
+                distractors: [
+                    "El conductor tenía exceso de experiencia en la vía.",
+                    "Disminuir el tamaño y contraste de las señales de tránsito."
+                ],
+                feedback: "Las señales deben superar el umbral perceptivo para ser detectadas oportunamente. El uso de materiales reflectivos, iluminación y redundancia sensorial mejora la visibilidad y reduce el riesgo en condiciones adversas."
+            },
+            {
+                type: "ms",
+                instruction: "Seleccione la respuesta correcta",
+                case: "Caso 2 – Zona escolar inclusiva: En una escuela rural no hay reductores de velocidad ni semáforos peatonales, lo que expone a los niños al riesgo.",
+                question: "5. ¿Qué funciones forzosas e inclusivas aplicarías en esta zona?",
+                options: [
+                    {t: "a) Pasos peatonales elevados, señalización sonora.", c: true},
+                    {t: "b) Cámara de velocidad.", c: false},
+                    {t: "c) Barrera de protección.", c: false},
+                    {t: "d) Señalización horizontal de cruce peatonal.", c: false}
+                ],
+                feedback: "El paso peatonal elevado obliga al conductor a reducir la velocidad; la señalización sonora advierte del riesgo de actores humanos en la vía y aumenta la redundancia sensorial."
+            },
+            {
+                type: "fill",
+                instruction: "Arrastrar y soltar texto",
+                case: "Caso 3 – Ciclovía mal diseñada: Una ciclovía en doble sentido, estrecha y sin separación, provoca colisiones entre ciclistas y conflictos con peatones.",
+                question: "6. La falta de separación física y el diseño estrecho de la ciclovía generan {drop1}, mientras que una solución adecuada consiste en {drop2}.",
+                options: [
+                    { key: "drop1", correct: "Aumento de la carga cognitiva y menor capacidad de anticipación." },
+                    { key: "drop2", correct: "Carriles unidireccionales y segregación física." }
+                ],
+                distractors: [
+                    "Mayor claridad en la interacción vial.",
+                    "Eliminación de toda señalización horizontal."
+                ],
+                feedback: "La falta de separación física aumenta la carga cognitiva y dificulta anticipar movimientos. Carriles unidireccionales, segregación y señalización clara reducen conflictos y mejoran la seguridad vial."
+            },
+            {
+                type: "ms",
+                instruction: "Seleccione la respuesta correcta",
+                case: "Caso 4 – Intersección caótica: En una intersección sin semaforización clara, los conductores se confunden y generan choques en horas pico.",
+                question: "7. ¿Qué principios de ergonomía y tecnología aplicarías para mejorar esta intersección?",
+                options: [
+                    {t: "a) Incorporar más señales informativas y mantener ciclos semafóricos fijos.", c: false},
+                    {t: "b) Implementar cruces amplios, mejorar la visibilidad y usar semáforos adaptativos con temporizadores.", c: true},
+                    {t: "c) Priorizar el flujo vehicular reduciendo tiempos peatonales y eliminando señalización redundante.", c: false},
+                    {t: "d) Aumentar la iluminación y reemplazar los sensores por señalización estática permanente.", c: false}
+                ],
+                feedback: "La ergonomía vial busca reducir errores mediante visibilidad clara y organización del flujo. Tecnologías como sensores y temporizadores mejoran la anticipación y disminuyen conflictos en intersecciones."
+            },
+            {
+                type: "fill",
+                instruction: "Arrastrar y soltar texto",
+                case: "Caso 5 – Adaptación sensorial: Un conductor habitual ignora la señal de “zona de obras” porque siempre transita por la misma ruta y ya no le presta atención.",
+                question: "8. El conductor dejó de responder a la señal debido a {drop1}, y una estrategia adecuada para mitigarlo es {drop2}.",
+                options: [
+                    { key: "drop1", correct: "Adaptación sensorial por repetición de estímulos." },
+                    { key: "drop2", correct: "Señalización dinámica y franjas sonoras en el pavimento." }
+                ],
+                distractors: [
+                    "Exceso de percepción del riesgo.",
+                    "Eliminación de señales temporales en la vía."
+                ],
+                feedback: "La repetición constante de estímulos reduce la atención del conductor. Señales dinámicas y estímulos multisensoriales ayudan a recuperar la percepción del riesgo y mejorar la respuesta."
+            },
+            {
+                type: "vf",
+                instruction: "Seleccione Verdadero o Falso",
+                case: "Caso 6 – Sistema seguro en carretera nacional: Una carretera tiene siniestros recurrentes por exceso de velocidad, pese a controles policiales.",
+                question: "9. El enfoque de Sistema Seguro considera que basta con aumentar los controles policiales para reducir las muertes por exceso de velocidad, sin necesidad de intervenir la infraestructura o incorporar tecnologías de seguridad.",
+                options: [
+                    {t: "Verdadero", c: false},
+                    {t: "Falso", c: true}
+                ],
+                feedback: "El Sistema Seguro integra infraestructura segura, control automático, tecnología y gestión del riesgo para evitar que los errores humanos terminen en lesiones graves o muertes."
+            },
+            {
+                type: "ms",
+                instruction: "Seleccione la respuesta correcta",
+                case: "Caso 7 – Tecnología dinámica: En una autopista, paneles electrónicos informan en tiempo real sobre congestión y clima, reduciendo accidentes en un 20%.",
+                question: "10. ¿Por qué la tecnología dinámica mejora la seguridad y qué principio psicológico interviene?",
+                options: [
+                    {t: "a) Porque mantiene información constante y reduce la necesidad de atención del conductor.", c: false},
+                    {t: "b) Porque rompe la adaptación sensorial, aumenta la atención y mejora la percepción del riesgo.", c: true},
+                    {t: "c) Porque reemplaza completamente la toma de decisiones humanas en la conducción.", c: false},
+                    {t: "d) Porque disminuye la visibilidad del entorno para evitar distracciones secundarias.", c: false}
+                ],
+                feedback: "La señalización dinámica mantiene la atención del conductor, evita la adaptación sensorial y mejora la percepción del riesgo ante cambios en el entorno vial."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        const totalPoints = 13; // Q1(1) + Q2(1) + Q3(1) + Q4(2) + Q5(1) + Q6(2) + Q7(1) + Q8(2) + Q9(1) + Q10(1) = 13 puntos
+        let selectedItemForClick = null;
+
+        function startQuiz() {
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = quizData[currentIdx];
+            selectedItemForClick = null;
+            
+            document.getElementById('q-number').innerText = `PREGUNTA ${currentIdx + 1}/${quizData.length}`;
+            document.getElementById('progress-fill').style.width = `${((currentIdx + 1)/quizData.length)*100}%`;
+            document.getElementById('q-instruction').innerText = q.instruction;
+            document.getElementById('feedback-box').classList.add('hidden');
+            document.getElementById('warning-box').classList.add('hidden');
+            document.getElementById('btn-validate').classList.remove('hidden');
+
+            const caseBox = document.getElementById('case-box');
+            if (q.case) {
+                caseBox.innerText = q.case;
+                caseBox.classList.remove('hidden');
+            } else {
+                caseBox.classList.add('hidden');
+            }
+
+            const optContainer = document.getElementById('options-container');
+            const fillContainer = document.getElementById('fill-blank-container');
+
+            if (q.type === "fill") {
+                optContainer.classList.add('hidden');
+                fillContainer.classList.remove('hidden');
+                setupFillInBlanks(q);
+            } else {
+                fillContainer.classList.add('hidden');
+                optContainer.classList.remove('hidden');
+                document.getElementById('q-text').innerText = q.question;
+                setupSelectionOptions(q, optContainer);
+            }
+        }
+
+        function setupSelectionOptions(q, container) {
+            container.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const d = document.createElement('div');
+                d.className = "option-card flex items-center p-4 rounded-xl mb-2 text-base";
+                d.innerHTML = `
+                    <input type="radio" name="ans" id="o${i}" value="${i}" class="w-5 h-5 accent-[#27728F]">
+                    <label for="o${i}" class="ml-4 w-full cursor-pointer font-medium text-slate-700">${opt.t}</label>
+                `;
+                d.onclick = () => {
+                    document.getElementById('warning-box').classList.add('hidden');
+                    document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
+                    d.classList.add('selected');
+                    d.querySelector('input').checked = true;
+                };
+                container.appendChild(d);
+            });
+        }
+
+        function setupFillInBlanks(q) {
+            const dragBank = document.getElementById('drag-bank');
+            dragBank.innerHTML = '';
+
+            const pool = [...q.options.map(o => o.correct), ...q.distractors];
+            pool.sort(() => Math.random() - 0.5);
+
+            pool.forEach((text, i) => {
+                const item = document.createElement('div');
+                item.className = "drag-item-inline";
+                item.draggable = true;
+                item.innerText = text;
+                item.id = `drag-blank-${i}`;
+                
+                item.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', e.target.id);
+                    document.getElementById('warning-box').classList.add('hidden');
+                });
+
+                item.addEventListener('click', () => {
+                    document.getElementById('warning-box').classList.add('hidden');
+                    if (selectedItemForClick) {
+                        selectedItemForClick.classList.remove('selected-for-click');
+                        selectedItemForClick.style.borderColor = "var(--primary)";
+                        selectedItemForClick.style.backgroundColor = "white";
+                    }
+                    if (selectedItemForClick === item) {
+                        selectedItemForClick = null;
+                    } else {
+                        selectedItemForClick = item;
+                        item.classList.add('selected-for-click');
+                        item.style.borderColor = "var(--primary-dark)";
+                        item.style.backgroundColor = "var(--primary-light)";
+                    }
+                });
+
+                dragBank.appendChild(item);
+            });
+
+            let questionHTML = q.question;
+            q.options.forEach((opt) => {
+                const dropId = opt.key;
+                const dropPlaceholder = `<div class="drop-zone-inline border-2" id="zone-${dropId}" data-key="${dropId}"><span class="text-slate-400 text-xs font-semibold uppercase">Vacío</span></div>`;
+                questionHTML = questionHTML.replace(`{${dropId}}`, dropPlaceholder);
+            });
+
+            const qTextHeader = document.getElementById('q-text');
+            qTextHeader.innerHTML = questionHTML;
+            qTextHeader.className = "text-lg font-semibold leading-relaxed text-slate-800 border-l-4 border-[#27728F] pl-4 py-2 bg-slate-50";
+
+            document.querySelectorAll('.drop-zone-inline').forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('active');
+                });
+
+                zone.addEventListener('dragleave', () => zone.classList.remove('active'));
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('active');
+                    const itemId = e.dataTransfer.getData('text/plain');
+                    const draggedElement = document.getElementById(itemId);
+                    placeElementInZone(draggedElement, zone);
+                });
+
+                zone.addEventListener('click', () => {
+                    if (selectedItemForClick) {
+                        const elementToPlace = selectedItemForClick;
+                        elementToPlace.classList.remove('selected-for-click');
+                        elementToPlace.style.borderColor = "var(--primary)";
+                        elementToPlace.style.backgroundColor = "white";
+                        selectedItemForClick = null;
+                        placeElementInZone(elementToPlace, zone);
+                    } else {
+                        const placed = zone.querySelector('.drag-item-inline');
+                        if (placed) {
+                            placed.classList.remove('placed-item');
+                            document.getElementById('drag-bank').appendChild(placed);
+                            zone.innerHTML = `<span class="text-slate-400 text-xs font-semibold uppercase">Vacío</span>`;
+                            zone.classList.remove('border-solid', 'border-custom');
+                        }
+                    }
+                });
+            });
+        }
+
+        function placeElementInZone(element, zone) {
+            if (element) {
+                const currentChild = zone.querySelector('.drag-item-inline');
+                if (currentChild) {
+                    const dragBank = document.getElementById('drag-bank');
+                    currentChild.classList.remove('placed-item');
+                    dragBank.appendChild(currentChild);
+                }
+
+                zone.innerHTML = '';
+                element.classList.add('placed-item');
+                zone.appendChild(element);
+                zone.classList.add('border-solid', 'border-custom');
+            }
+        }
+
+        function validateAnswer() {
+            const q = quizData[currentIdx];
+            let isCorrect = true;
+            let earnedPoints = 0;
+
+            if (q.type === "fill") {
+                const zones = document.querySelectorAll('.drop-zone-inline');
+                let allPlaced = true;
+
+                zones.forEach(zone => {
+                    if (!zone.querySelector('.drag-item-inline')) {
+                        allPlaced = false;
+                    }
+                });
+
+                if (!allPlaced) {
+                    document.getElementById('warning-box').classList.remove('hidden');
+                    return;
+                }
+
+                document.getElementById('warning-box').classList.add('hidden');
+
+                // Almacenamos el registro de respuestas en el objeto de la pregunta
+                q.userAnswer = {};
+
+                zones.forEach(zone => {
+                    const key = zone.getAttribute('data-key');
+                    const placedText = zone.querySelector('.drag-item-inline').innerText;
+                    const expectedText = q.options.find(o => o.key === key).correct;
+                    
+                    q.userAnswer[key] = placedText;
+
+                    if (placedText === expectedText) {
+                        earnedPoints++;
+                        zone.style.borderColor = "#22c55e";
+                        zone.style.background = "#f0fdf4";
+                    } else {
+                        isCorrect = false;
+                        zone.style.borderColor = "#ef4444";
+                        zone.style.background = "#fef2f2";
+                    }
+                    zone.style.pointerEvents = "none";
+                });
+
+                score += earnedPoints;
+
+            } else {
+                const selectedInput = document.querySelector('input[name="ans"]:checked');
+                if (!selectedInput) {
+                    document.getElementById('warning-box').classList.remove('hidden');
+                    return;
+                }
+
+                document.getElementById('warning-box').classList.add('hidden');
+                
+                const chosenVal = parseInt(selectedInput.value);
+                q.userAnswer = chosenVal;
+
+                isCorrect = q.options[chosenVal].c;
+                if (isCorrect) {
+                    score++;
+                }
+
+                document.querySelectorAll('.option-card').forEach(el => el.classList.add('locked'));
+            }
+
+            const fBox = document.getElementById('feedback-box');
+            fBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+            document.getElementById('btn-validate').classList.add('hidden');
+
+            const fTitle = document.getElementById('feedback-title');
+            if (q.type === "fill") {
+                if (isCorrect) {
+                    fTitle.innerText = "¡Correcto!";
+                    fTitle.className = "font-bold text-lg text-green-700";
+                    fBox.classList.add('bg-green-50', 'border-green-200');
+                } else {
+                    fTitle.innerText = `Puntaje parcial: ${earnedPoints} de 2 aciertos`;
+                    fTitle.className = "font-bold text-lg text-red-700";
+                    fBox.classList.add('bg-red-50', 'border-red-200');
+                }
+            } else {
+                if (isCorrect) {
+                    fTitle.innerText = "¡Correcto!";
+                    fTitle.className = "font-bold text-lg text-green-700";
+                    fBox.classList.add('bg-green-50', 'border-green-200');
+                } else {
+                    fTitle.innerText = "Incorrecto";
+                    fTitle.className = "font-bold text-lg text-red-700";
+                    fBox.classList.add('bg-red-50', 'border-red-200');
+                }
+            }
+
+            document.getElementById('feedback-body').innerHTML = `<strong>Realimentación:</strong> ${q.feedback}`;
+        }
+
+        function nextStep() {
+            currentIdx++;
+            if (currentIdx < quizData.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+            
+            const percent = Math.round((score / totalPoints) * 100);
+            const circumference = 596;
+            const offset = circumference - (percent / 100) * circumference;
+            
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    document.getElementById('final-circle').style.strokeDashoffset = offset;
+                }, 50);
+            });
+            
+            let count = 0;
+            const timer = setInterval(() => {
+                if (count >= percent) {
+                    document.getElementById('result-percent').innerText = percent;
+                    clearInterval(timer);
+                } else {
+                    count++;
+                    document.getElementById('result-percent').innerText = count;
+                }
+            }, 15);
+
+            document.getElementById('result-score').innerText = `Puntaje Final: ${score} de ${totalPoints} puntos`;
+            const msg = document.getElementById('result-msg');
+            
+            if (percent === 100) {
+                msg.innerText = "¡Excelente! Demuestras un entendimiento sobresaliente del comportamiento humano en la vía, de cómo la infraestructura adaptativa e inclusiva compensa los fallos de atención y del papel clave que juegan las funciones forzosas.";
+            } else if (percent >= 70) {
+                msg.innerText = "¡Buen trabajo! Tienes claros los fundamentos de la atención selectiva, la teoría de los umbrales de estímulo, la adaptación sensorial y las estrategias de diseño inclusivo para mitigar el riesgo.";
+            } else {
+                msg.innerText = "Te sugerimos repasar la influencia de las funciones forzosas sobre la conducta, el fenómeno de adaptación sensorial y cómo el estrechamiento y el umbral de estímulos pueden inducir siniestralidad bajo condiciones adversas.";
+            }
+
+            buildSummaryCards();
+        }
+
+        function buildSummaryCards() {
+            const container = document.getElementById('summary-cards');
+            container.innerHTML = '';
+
+            quizData.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = "p-6 rounded-2xl border-l-8 bg-slate-50 shadow-sm transition-all duration-300 animate__animated animate__fadeInUp";
+                
+                let isFullyCorrect = false;
+                let isPartiallyCorrect = false;
+                let statusBadge = '';
+                let userValHTML = '';
+                let correctValHTML = '';
+
+                if (q.type === "fill") {
+                    let correctCount = 0;
+                    const totalBlanks = q.options.length;
+                    const breakdown = [];
+
+                    q.options.forEach(opt => {
+                        const userVal = q.userAnswer ? q.userAnswer[opt.key] : '';
+                        const correctVal = opt.correct;
+                        const isBlankCorrect = (userVal === correctVal);
+                        
+                        if (isBlankCorrect) correctCount++;
+                        breakdown.push({
+                            key: opt.key,
+                            userVal: userVal || '[Vacío]',
+                            correctVal,
+                            correct: isBlankCorrect
+                        });
+                    });
+
+                    isFullyCorrect = (correctCount === totalBlanks);
+                    isPartiallyCorrect = (correctCount > 0 && correctCount < totalBlanks);
+
+                    if (isFullyCorrect) {
+                        card.classList.add('border-green-500');
+                        statusBadge = '<span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full">Correcto</span>';
+                    } else if (isPartiallyCorrect) {
+                        card.classList.add('border-amber-500');
+                        statusBadge = `<span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">Parcial (${correctCount}/${totalBlanks})</span>`;
+                    } else {
+                        card.classList.add('border-red-500');
+                        statusBadge = '<span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-bold rounded-full">Incorrecto</span>';
+                    }
+
+                    userValHTML = breakdown.map(item => `
+                        <div class="text-sm mt-1">
+                            <span class="font-semibold text-slate-500">Espacio ${item.key === 'drop1' ? '1' : '2'}:</span> 
+                            <span class="${item.correct ? 'text-green-700 font-medium' : 'text-red-600 font-semibold'}">${item.userVal}</span>
+                            ${!item.correct ? `<div class="text-xs text-slate-500 ml-4 font-normal mt-0.5">Sugerencia correcta: <span class="text-green-700 font-medium">${item.correctVal}</span></div>` : ''}
+                        </div>
+                    `).join('');
+
+                } else {
+                    const userAnsIdx = q.userAnswer;
+                    const correctAnsIdx = q.options.findIndex(o => o.c);
+                    isFullyCorrect = (userAnsIdx === correctAnsIdx);
+
+                    if (isFullyCorrect) {
+                        card.classList.add('border-green-500');
+                        statusBadge = '<span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full">Correcto</span>';
+                        userValHTML = `<span class="text-green-700 font-medium">${q.options[userAnsIdx].t}</span>`;
+                    } else {
+                        card.classList.add('border-red-500');
+                        statusBadge = '<span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-bold rounded-full">Incorrecto</span>';
+                        userValHTML = `<span class="text-red-600 font-semibold">${userAnsIdx !== undefined && userAnsIdx !== null ? q.options[userAnsIdx].t : '[Sin responder]'}</span>`;
+                        correctValHTML = `
+                            <div class="text-sm mt-1">
+                                <span class="font-semibold text-slate-500">Respuesta sugerida:</span> 
+                                <span class="text-green-700 font-medium">${q.options[correctAnsIdx].t}</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                // Generamos la maqueta de la pregunta limpia (removiendo llaves del drag & drop)
+                const cleanQuestionText = q.question.replace(/\{drop\d+\}/g, '_______');
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm font-bold text-slate-400 uppercase tracking-wider">Pregunta ${idx + 1}</span>
+                        ${statusBadge}
+                    </div>
+                    ${q.case ? `<div class="mb-2 text-sm italic bg-white p-3 rounded-xl border border-slate-200 text-slate-600">${q.case}</div>` : ''}
+                    <div class="font-semibold text-slate-800 mb-3 text-base">${cleanQuestionText}</div>
+                    
+                    <div class="bg-white p-4 rounded-xl border border-slate-100 space-y-1.5 mb-3 shadow-inner">
+                        <div class="text-sm"><span class="font-semibold text-slate-600">Tu respuesta:</span> ${userValHTML}</div>
+                        ${correctValHTML}
+                    </div>
+                    
+                    <div class="text-sm text-slate-600 bg-slate-100 p-3 rounded-xl border border-slate-200">
+                        <strong class="text-custom">Explicación académica:</strong> ${q.feedback}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
