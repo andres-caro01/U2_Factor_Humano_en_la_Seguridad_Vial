@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Estadístico Centrado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(25, 30, 41, 0.6);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #8e9cae;
+            
+            /* Colores sutiles de acento */
+            --color-1: #00b4d8;
+            --color-2: #2ccb75;
+            --color-3: #e63946;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Instrucción flotante */
+        .instruction {
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            padding: 8px 16px;
+            border-radius: 50px;
+            margin-bottom: 40px;
+            letter-spacing: 0.5px;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Contenedor principal */
+        .container {
+            display: flex;
+            gap: 25px;
+            width: 90%;
+            max-width: 1100px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Tarjeta Estilo Centrado */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 35px 28px;
+            width: 32%;
+            height: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centrado horizontal de los elementos */
+            text-align: center;  /* Centrado del texto */
+            backdrop-filter: blur(8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                        border-color 0.4s ease, 
+                        box-shadow 0.4s ease, 
+                        opacity 0.4s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Círculo de Progreso */
+        .progress-container {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin-bottom: 25px;
+        }
+
+        svg {
+            width: 110px;
+            height: 110px;
+            transform: rotate(-90deg);
+        }
+
+        svg circle {
+            fill: none;
+            stroke-width: 7;
+            stroke-linecap: round;
+        }
+
+        svg circle.bg {
+            stroke: rgba(255, 255, 255, 0.04);
+        }
+
+        svg circle.progress {
+            transition: stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* Textos */
+        .title {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .description {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-weight: 300;
+        }
+
+        .source {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            font-weight: 500;
+            opacity: 0.6;
+        }
+
+        /* Colores asignados */
+        .card:nth-child(1) svg circle.progress { stroke: var(--color-1); }
+        .card:nth-child(1) .percentage { color: var(--color-1); }
+        .card:nth-child(1) .title { color: var(--text-primary); }
+
+        .card:nth-child(2) svg circle.progress { stroke: var(--color-2); }
+        .card:nth-child(2) .percentage { color: var(--color-2); }
+        .card:nth-child(2) .title { color: var(--text-primary); }
+
+        .card:nth-child(3) svg circle.progress { stroke: var(--color-3); }
+        .card:nth-child(3) .percentage { color: var(--color-3); }
+        .card:nth-child(3) .title { color: var(--text-primary); }
+
+        /* Efectos de Interacción */
+        .container:hover .card {
+            opacity: 0.6;
+        }
+
+        .container .card:hover {
+            transform: translateY(-8px) scale(1.03);
+            opacity: 1;
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .container .card:active {
+            transform: translateY(-4px) scale(1.01);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="instruction">
+        Haga clic sobre las tarjetas para reiniciar la animación.
+    </div>
+
+    <div class="container">
+        
+        <div class="card" data-target="92">
+            <div class="progress-container">
+                <svg>
+                    <circle class="bg" cx="55" cy="55" r="48"></circle>
+                    <circle class="progress" cx="55" cy="55" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"></circle>
+                </svg>
+                <div class="percentage">0%</div>
+            </div>
+            <h2 class="title">Muertes globales</h2>
+            <p class="description">Concentradas en países de ingresos bajos y medios.</p>
+            <span class="source">(OMS, 2023)</span>
+        </div>
+
+        <div class="card" data-target="13">
+            <div class="progress-container">
+                <svg>
+                    <circle class="bg" cx="55" cy="55" r="48"></circle>
+                    <circle class="progress" cx="55" cy="55" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"></circle>
+                </svg>
+                <div class="percentage">0%</div>
+            </div>
+            <h2 class="title">Países de renta baja</h2>
+            <p class="description">Soportan el 13% de muertes globales con menos del 1% de los vehículos.</p>
+        </div>
+
+        <div class="card" data-target="8">
+            <div class="progress-container">
+                <svg>
+                    <circle class="bg" cx="55" cy="55" r="48"></circle>
+                    <circle class="progress" cx="55" cy="55" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"></circle>
+                </svg>
+                <div class="percentage">0%</div>
+            </div>
+            <h2 class="title">Países de renta alta</h2>
+            <p class="description">Solo registran el 8% de fatalidades con el 28% de la flota mundial.</p>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cards = document.querySelectorAll('.card');
+            const circumference = 301.6;
+
+            function animateCard(card) {
+                const targetValue = parseInt(card.getAttribute('data-target'));
+                const progressCircle = card.querySelector('.progress');
+                const percentText = card.querySelector('.percentage');
+                
+                if(card.counterIntervalId) {
+                    clearInterval(card.counterIntervalId);
+                }
+
+                progressCircle.style.transition = 'none';
+                progressCircle.style.strokeDashoffset = circumference;
+                percentText.innerText = "0%";
+
+                progressCircle.getBoundingClientRect();
+
+                progressCircle.style.transition = 'stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                const offset = circumference - (targetValue / 100) * circumference;
+                progressCircle.style.strokeDashoffset = offset;
+
+                let startValue = 0;
+                const duration = 1800; 
+                const stepTime = Math.floor(duration / targetValue);
+
+                card.counterIntervalId = setInterval(() => {
+                    startValue++;
+                    percentText.innerText = startValue + "%";
+                    
+                    if (startValue >= targetValue) {
+                        clearInterval(card.counterIntervalId);
+                    }
+                }, stepTime);
+            }
+
+            cards.forEach(card => {
+                setTimeout(() => {
+                    animateCard(card);
+                }, 200);
+
+                card.addEventListener('click', () => {
+                    animateCard(card);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
